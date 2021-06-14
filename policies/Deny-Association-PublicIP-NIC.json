@@ -1,0 +1,40 @@
+
+{
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "name": "Deny-Association-PublicIP-NIC",
+    "properties": {
+        "displayName": "Deny Association of Public IP to NIC",
+        "description": "This policy denies association of Public IP's to a NIC under the assigned scope",
+        "metadata": {
+            "category": "Network"
+          },
+        "parameters": {},
+        "policyRule": {
+            "if": {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Network/networkInterfaces"
+                },
+                {
+                  "anyof": [
+                    {
+                      "field": "Microsoft.Network/networkInterfaces/ipconfigurations[*].publicIpAddress.id",
+                      "exists": true
+                    },
+                    {
+                      "not": {
+                        "field": "Microsoft.Network/networkInterfaces/ipconfigurations[*].publicIpAddress.id",
+                        "exists": false
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}
